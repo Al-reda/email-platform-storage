@@ -20,3 +20,4 @@ STORAGE__SERVICEURL=http://localhost:4566 STORAGE__TABLENAME=Announcements \
   dotnet run --urls http://localhost:5001
 ```
 
+
