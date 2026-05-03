@@ -1,0 +1,56 @@
+name: Deploy storage
+
+on:
+  push:
+    branches: [main]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REGISTRY: 947993334859.dkr.ecr.us-east-1.amazonaws.com
+  ECR_REPO: email-platform/storage
+  ECS_CLUSTER: email-platform-cluster
+  ECS_SERVICE: storage
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+        with:
+          path: storage
+
+      - name: Checkout shared repo
+        uses: actions/checkout@v4
+        with:
+          repository: Al-reda/email-platform-shared
+          path: shared
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker image
+        run: |
+          docker build \
+            --platform linux/amd64 \
+            -f storage/Dockerfile \
+            -t $ECR_REGISTRY/$ECR_REPO:${{ github.sha }} \
+            -t $ECR_REGISTRY/$ECR_REPO:latest \
+            .
+          docker push $ECR_REGISTRY/$ECR_REPO:${{ github.sha }}
+          docker push $ECR_REGISTRY/$ECR_REPO:latest
+
+      - name: Force ECS redeploy
+        run: |
+          aws ecs update-service \
+            --cluster $ECS_CLUSTER \
+            --service $ECS_SERVICE \
+            --force-new-deployment \
+            --region $AWS_REGION
