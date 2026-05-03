@@ -10,6 +10,7 @@ env:
   ECR_REPO: email-platform/storage
   ECS_CLUSTER: email-platform-cluster
   ECS_SERVICE: storage
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   deploy:
