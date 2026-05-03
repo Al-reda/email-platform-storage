@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Shared library — installed from GitHub Packages (not a local ProjectReference) -->
-    <PackageReference Include="EmailPlatform.Shared" Version="1.0.0" />
+    <ProjectReference Include="..\shared\Shared.csproj" />
 
     <!-- AWS -->
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.400" />
