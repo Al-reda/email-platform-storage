@@ -19,3 +19,4 @@ Internal API — the only service that talks to DynamoDB. All other services cal
 STORAGE__SERVICEURL=http://localhost:4566 STORAGE__TABLENAME=Announcements \
   dotnet run --urls http://localhost:5001
 ```
+
